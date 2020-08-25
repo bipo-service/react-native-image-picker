@@ -569,8 +569,19 @@ public class ImagePickerModule extends ReactContextBaseJavaModule
     final int cameraPermission = ActivityCompat
             .checkSelfPermission(activity, Manifest.permission.CAMERA);
 
-    final boolean permissionsGrated = writePermission == PackageManager.PERMISSION_GRANTED &&
-            cameraPermission == PackageManager.PERMISSION_GRANTED;
+    // final boolean permissionsGrated = writePermission == PackageManager.PERMISSION_GRANTED &&
+    // cameraPermission == PackageManager.PERMISSION_GRANTED;
+    
+    //25-08-2020 Add REQUEST_PERMISSIONS_FOR_LIBRARY permission      
+    boolean permissionsGrated = false;
+    if(requestCode == REQUEST_PERMISSIONS_FOR_LIBRARY && writePermission == PackageManager.PERMISSION_GRANTED){
+       permissionsGrated = true;
+    }
+    else if(requestCode != REQUEST_PERMISSIONS_FOR_LIBRARY ) {
+      permissionsGrated = writePermission == PackageManager.PERMISSION_GRANTED &&
+              cameraPermission == PackageManager.PERMISSION_GRANTED;
+    }
+
 
     if (!permissionsGrated)
     {
@@ -620,7 +631,15 @@ public class ImagePickerModule extends ReactContextBaseJavaModule
       }
       else
       {
-        String[] PERMISSIONS = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
+        // String[] PERMISSIONS = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
+        //25-08-2020 Add REQUEST_PERMISSIONS_FOR_LIBRARY permission
+        String[] PERMISSIONS = {};
+        if(requestCode == REQUEST_PERMISSIONS_FOR_LIBRARY) {
+          PERMISSIONS = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        } else {
+          PERMISSIONS = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
+        }
+
         if (activity instanceof ReactActivity)
         {
           ((ReactActivity) activity).requestPermissions(PERMISSIONS, requestCode, listener);
